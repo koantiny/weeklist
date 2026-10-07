@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Weeklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,620&family=Nunito+Sans:opsz,wght@6..12,440;6..12,600;6..12,750&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #efe7d8;
+    --paper: #fffdf8;
+    --ink: #241c14;
+    --muted: #7d7266;
+    --line: #e6dccb;
+    --tomato: #b8432a;
+    --tomato-deep: #8d301c;
+    --sage: #3d6848;
+    --sage-soft: #e7f0e6;
+    --butter: #f6e7c1;
+    --shadow: 0 10px 30px rgba(60, 40, 20, 0.08);
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Nunito Sans", "Segoe UI", sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(900px 420px at 10% -10%, #f7efe0 0%, transparent 60%),
+      radial-gradient(700px 380px at 110% 0%, #f3d9cc 0%, transparent 55%),
+      var(--bg);
+    min-height: 100vh;
+  }
+  button, input, textarea, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  h1, h2, h3 { font-family: Fraunces, Georgia, serif; font-weight: 620; letter-spacing: -0.03em; margin: 0; }
+  .app { max-width: 1080px; margin: 0 auto; padding: 28px 20px 96px; }
+  header.top {
+    display: flex; justify-content: space-between; gap: 16px; align-items: flex-end;
+    margin-bottom: 22px;
+  }
+  .brand small { display: block; color: var(--muted); font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 750; margin-bottom: 4px; }
+  .brand h1 { font-size: 42px; line-height: 0.95; }
+  .week-name {
+    background: transparent; border: none; border-bottom: 1px dashed #c9bba6;
+    font-family: Fraunces, Georgia, serif; font-size: 20px; padding: 4px 2px; min-width: 220px;
+  }
+  .week-name:focus { outline: none; border-bottom-color: var(--tomato); }
+  .top-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+  .tabs {
+    display: flex; gap: 6px; background: rgba(255,253,248,0.7); padding: 6px;
+    border-radius: 999px; width: fit-content; margin-bottom: 18px; border: 1px solid var(--line);
+  }
+  .tabs button {
+    border: 0; background: transparent; border-radius: 999px; padding: 10px 16px; font-weight: 750;
+  }
+  .tabs button.active { background: var(--ink); color: #fffdf8; }
+  .grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 16px; }
+  .card {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 18px;
+  }
+  .card h2 { font-size: 26px; margin-bottom: 4px; }
+  .sub { color: var(--muted); margin: 0 0 14px; font-size: 14.5px; }
+  .row { display: flex; gap: 8px; }
+  input[type="text"], input[type="number"], textarea, select {
+    width: 100%; background: #fff; border: 1px solid #e3d8c6; border-radius: 12px; padding: 11px 12px;
+  }
+  textarea { min-height: 72px; resize: vertical; }
+  input:focus, textarea:focus, select:focus { outline: 2px solid #efd3a4; border-color: #d7b27a; }
+  .btn {
+    border: 0; border-radius: 12px; padding: 11px 14px; font-weight: 750; background: var(--ink); color: #fffdf8;
+  }
+  .btn.tomato { background: var(--tomato); }
+  .btn.tomato:hover { background: var(--tomato-deep); }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid #d9cdb8; }
+  .btn.sage { background: var(--sage); }
+  .btn.small { padding: 7px 10px; border-radius: 10px; font-size: 13px; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 14px; }
+  .chip, .recipe-pick, .staple {
+    border: 1px solid #e4d8c4; background: #fff; border-radius: 999px; padding: 8px 12px; font-weight: 700;
+  }
+  .chip.on, .recipe-pick.on, .staple.on { background: var(--sage-soft); border-color: #b7d0b8; color: #234430; }
+  .recipe-list { display: flex; flex-direction: column; gap: 8px; }
+  .recipe-pick, .staple { display: flex; justify-content: space-between; gap: 10px; align-items: center; border-radius: 14px; text-align: left; }
+  .recipe-pick small, .muted { color: var(--muted); font-weight: 600; }
+  .ing-row { display: grid; grid-template-columns: 90px 1fr 150px 36px; gap: 8px; margin-bottom: 8px; }
+  .icon-btn { border: 0; background: #f6efe4; border-radius: 10px; width: 36px; height: 42px; }
+  .list-section { margin-top: 8px; }
+  .aisle {
+    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+    font-weight: 800; margin: 16px 0 8px;
+  }
+  .item {
+    display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: start;
+    padding: 10px 0; border-bottom: 1px solid var(--line);
+  }
+  .item.checked .item-text { text-decoration: line-through; color: var(--muted); }
+  .item input[type="checkbox"] { width: 18px; height: 18px; margin-top: 4px; accent-color: var(--sage); }
+  .item-text { font-size: 17px; }
+  .src { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .empty {
+    border: 1px dashed #d7cbb8; border-radius: 14px; padding: 18px; color: var(--muted); background: #fffaf2;
+  }
+  .recipes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+  .recipe-card h3 { font-size: 22px; margin-bottom: 6px; }
+  .recipe-card ul { margin: 8px 0 12px; padding-left: 18px; }
+  .recipe-card li { margin: 3px 0; }
+  .split { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+  dialog {
+    border: 0; border-radius: 20px; padding: 0; width: min(640px, calc(100% - 24px));
+    box-shadow: 0 24px 80px rgba(40, 24, 10, 0.25);
+  }
+  dialog::backdrop { background: rgba(36, 28, 20, 0.4); }
+  .dialog-body { padding: 20px; background: var(--paper); }
+  .footer-note { color: var(--muted); font-size: 13px; margin-top: 18px; }
+  .hidden { display: none !important; }
+  .count { background: var(--butter); border-radius: 999px; padding: 2px 8px; font-size: 12px; font-weight: 800; }
+  @media (max-width: 800px) {
+    .grid { grid-template-columns: 1fr; }
+    .brand h1 { font-size: 34px; }
+    header.top { flex-direction: column; align-items: flex-start; }
+    .ing-row { grid-template-columns: 78px 1fr 36px; }
+    .ing-row select { grid-column: 1 / -1; }
+    .app { padding: 18px 14px 88px; }
+  }
+  @media print {
+    @page { size: letter; margin: 0.4in; }
+    body { background: white; color: #1a140e; }
+    .app { max-width: none; padding: 0; }
+    .no-print, #screen { display: none !important; }
+    #print-sheet { display: block !important; }
+    #print-sheet h1 { font-size: 15pt; line-height: 1; }
+    .print-head { border-bottom: 1.5px solid #1a140e; margin: 0 0 4px; padding-bottom: 3px; }
+    .print-head div { font-size: 9pt; }
+    .print-cook { font-size: 9pt; margin: 0 0 8px; }
+    .print-cols { column-count: 2; column-gap: 22px; }
+    .print-group { break-inside: avoid; margin: 0 0 7px; }
+    .print-aisle {
+      font-family: "Nunito Sans", "Segoe UI", sans-serif;
+      font-size: 8pt; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 800;
+      border-bottom: 1px solid #bbb; margin: 0 0 2px; padding-bottom: 1px;
+    }
+    .print-item {
+      display: flex; align-items: flex-start; gap: 6px;
+      font-size: 11pt; line-height: 1.2; padding: 1px 0; break-inside: avoid;
+    }
+    .print-box { width: 10px; height: 10px; border: 1px solid #1a140e; flex: 0 0 10px; margin: 3px 0 0; }
+  }
+  #print-sheet { display: none; }
+  .print-head { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #241c14; margin-bottom: 8px; }
+  .print-box { width: 14px; height: 14px; border: 1.5px solid #241c14; display: inline-block; margin-right: 10px; transform: translateY(1px); }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top no-print">
+    <div class="brand">
+      <small>Grocery week</small>
+      <h1>Weeklist</h1>
+    </div>
+    <div>
+      <input id="weekName" class="week-name" aria-label="Week name" />
+      <div class="top-actions" style="margin-top:8px">
+        <button class="btn ghost small" id="exportBtn" type="button">Backup</button>
+        <button class="btn ghost small" id="importBtn" type="button">Restore</button>
+        <input id="importFile" type="file" accept="application/json" class="hidden" />
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs no-print" aria-label="Sections">
+    <button type="button" data-tab="plan" class="active">This week</button>
+    <button type="button" data-tab="list">Review list <span class="count" id="listCount">0</span></button>
+    <button type="button" data-tab="recipes">Recipes</button>
+  </nav>
+
+  <div id="screen">
+    <section id="tab-plan">
+      <div class="grid">
+        <div class="card">
+          <div class="split">
+            <h2>Recipes for the week</h2>
+            <button class="btn ghost small" id="clearPicks" type="button">Clear picks</button>
+          </div>
+          <p class="sub">Tap what you’re cooking. The list is built from these, plus staples and one-liners.</p>
+          <div class="chips" id="templateChips"></div>
+          <div class="recipe-list" id="planRecipes"></div>
+          <div class="row" style="margin-top:14px">
+            <input id="templateName" type="text" placeholder="Save these picks as a template, e.g. Normal week" />
+            <button class="btn ghost" id="saveTemplate" type="button">Save template</button>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <h2>One-liners</h2>
+            <p class="sub">Anything that isn’t from a recipe. Milk, dishwasher tabs, the thing you remembered in the car.</p>
+            <div class="row">
+              <input id="extraQty" type="text" placeholder="Qty" style="max-width:90px" />
+              <input id="extraItem" type="text" placeholder="Add an item and press Enter" />
+            </div>
+            <div id="extras" style="margin-top:10px"></div>
+          </div>
+          <div class="card" style="margin-top:16px">
+            <div class="split">
+              <h2>Staples</h2>
+              <button class="btn ghost small" id="addStaple" type="button">Add staple</button>
+            </div>
+            <p class="sub">Pinned items. Turn them off for a week you already have them.</p>
+            <div id="staples"></div>
+          </div>
+          <button class="btn tomato" id="goList" type="button" style="width:100%; margin-top:16px">Review the list</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-list" class="hidden">
+      <div class="card">
+        <div class="split">
+          <div>
+            <h2>Before the shop</h2>
+            <p class="sub">Strike what you already have. What’s left is the printout.</p>
+          </div>
+          <div class="row no-print">
+            <button class="btn ghost" id="copyList" type="button">Copy</button>
+            <button class="btn tomato" id="printBtn" type="button">Print</button>
+          </div>
+        </div>
+        <div id="reviewList"></div>
+      </div>
+    </section>
+
+    <section id="tab-recipes" class="hidden">
+      <div class="split" style="margin-bottom:12px">
+        <div>
+          <h2>Recipe box</h2>
+          <p class="sub">Save a recipe once. Reuse it every week it shows up.</p>
+        </div>
+        <div class="row">
+          <button class="btn ghost" id="samplesBtn" type="button">Add 3 samples</button>
+          <button class="btn tomato" id="newRecipe" type="button">New recipe</button>
+        </div>
+      </div>
+      <div class="recipes-grid" id="recipeCards"></div>
+    </section>
+    <p class="footer-note no-print">Saved in this browser only. Use Backup if you might open it on another phone, or before clearing site data.</p>
+  </div>
+
+  <article id="print-sheet"></article>
+</div>
+
+<dialog id="recipeDialog">
+  <form class="dialog-body" id="recipeForm">
+    <div class="split">
+      <h2 id="recipeDialogTitle">New recipe</h2>
+      <button class="btn ghost small" type="button" id="closeDialog">Close</button>
+    </div>
+    <p class="sub">Ingredients are one line each. Quantity is optional.</p>
+    <input id="rName" type="text" placeholder="Recipe name" required />
+    <div class="row" style="margin-top:8px">
+      <input id="rServings" type="text" placeholder="Servings, e.g. 4" />
+      <input id="rNotes" type="text" placeholder="Note, optional" />
+    </div>
+    <div id="ingEditor" style="margin-top:12px"></div>
+    <button class="btn ghost small" type="button" id="addIng">Add ingredient</button>
+    <div class="row" style="margin-top:16px; justify-content:flex-end">
+      <button class="btn ghost" type="button" id="deleteRecipe">Delete</button>
+      <button class="btn tomato" type="submit">Save recipe</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+const AISLES = ["Produce","Bakery","Meat & fish","Dairy & eggs","Frozen","Pantry","Snacks","Drinks","Household","Other"];
+const KEYWORDS = [
+  ["Produce", "apple banana berry berries grape lemon lime orange avocado tomato potato onion garlic lettuce spinach kale salad herb cilantro parsley basil cucumber pepper carrot broccoli celery mushroom zucchini squash cabbage avocado lime melon peach pear plum greens scallion shallot ginger"],
+  ["Bakery", "bread loaf roll bagel tortilla bun pita naan croissant muffin cake pastry"],
+  ["Meat & fish", "chicken beef pork turkey sausage bacon steak mince ground lamb shrimp prawn salmon tuna fish cod meatball ham"],
+  ["Dairy & eggs", "milk cheese yogurt yoghurt butter egg eggs cream creme sour half-and-half cheddar mozzarella parmesan feta"],
+  ["Frozen", "frozen ice cream peas freezer pizza"],
+  ["Pantry", "pasta rice bean beans flour sugar oil olive vinegar sauce salsa spice salt pepper canned can tomato-paste broth stock oat oats cereal honey jam peanut almond soy soy-sauce mustard ketchup mayo mayonnaise noodle noodles quinoa lentil lentils"],
+  ["Snacks", "chip chips crisp crisps chocolate cookie cookies biscuit cracker crackers candy granola bar"],
+  ["Drinks", "juice coffee tea water soda wine beer seltzer kombucha"],
+  ["Household", "soap detergent paper towel toilet tissue foil bag bags sponge cleaner wipe wipes trash battery batteries shampoo toothpaste"]
+];
+
+const storeKey = "weeklist-v1";
+let db = load();
+let editingId = null;
+
+function uid() { return Math.random().toString(36).slice(2, 9); }
+function load() {
+  try {
+    const raw = localStorage.getItem(storeKey);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return blank();
+}
+function blank() {
+  return {
+    recipes: [],
+    staples: [
+      item("milk", "1", "Dairy & eggs"),
+      item("eggs", "1 dozen", "Dairy & eggs"),
+      item("bananas", "", "Produce")
+    ].map(s => ({...s, on: true})),
+    templates: [],
+    week: { name: defaultWeekName(), recipeIds: [], extras: [], removed: [], checks: {}, edits: {} }
+  };
+}
+function item(name, qty, aisle) {
+  return { id: uid(), qty: qty || "", item: name, aisle: aisle || guessAisle(name) };
+}
+function defaultWeekName() {
+  const d = new Date();
+  return "Week of " + d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+function save() { localStorage.setItem(storeKey, JSON.stringify(db)); }
+function guessAisle(text) {
+  const t = (text || "").toLowerCase();
+  for (const [aisle, words] of KEYWORDS) {
+    if (words.split(" ").some(w => w && t.includes(w))) return aisle;
+  }
+  return "Other";
+}
+function norm(s) { return (s || "").trim().toLowerCase().replace(/\s+/g, " "); }
+function keyOf(it) { return norm(it.item); }
+
+function render() {
+  document.getElementById("weekName").value = db.week.name || defaultWeekName();
+  renderTemplates();
+  renderPlanRecipes();
+  renderExtras();
+  renderStaples();
+  renderReview();
+  renderRecipeCards();
+  document.getElementById("listCount").textContent = visibleItems().length;
+}
+
+function renderTemplates() {
+  const el = document.getElementById("templateChips");
+  if (!db.templates.length) {
+    el.innerHTML = "<span class='muted'>No templates yet. Pick recipes, then save the set.</span>";
+    return;
+  }
+  el.innerHTML = db.templates.map(t => `<button type="button" class="chip" data-template="${t.id}">${escapeHtml(t.name)}</button>`).join("") +
+    `<button type="button" class="chip" id="manageTemplates">Manage</button>`;
+  el.querySelectorAll("[data-template]").forEach(btn => btn.onclick = () => applyTemplate(btn.dataset.template));
+  const manage = document.getElementById("manageTemplates");
+  if (manage) manage.onclick = manageTemplates;
+}
+function applyTemplate(id) {
+  const t = db.templates.find(x => x.id === id);
+  if (!t) return;
+  db.week.recipeIds = [...t.recipeIds];
+  db.week.extras = t.extras.map(e => ({...e, id: uid()}));
+  db.week.removed = [];
+  db.week.checks = {};
+  db.week.edits = {};
+  db.week.name = t.name;
+  save(); render();
+}
+function manageTemplates() {
+  if (!db.templates.length) return;
+  const names = db.templates.map((t, i) => `${i + 1}. ${t.name}`).join("\n");
+  const n = prompt("Delete a template by number, or cancel.\n\n" + names);
+  const i = Number(n) - 1;
+  if (n && db.templates[i]) { db.templates.splice(i, 1); save(); render(); }
+}
+
+function renderPlanRecipes() {
+  const el = document.getElementById("planRecipes");
+  if (!db.recipes.length) {
+    el.innerHTML = `<div class="empty">No recipes yet. Add one in Recipes, or drop in the samples to see the loop.</div>`;
+    return;
+  }
+  el.innerHTML = db.recipes.map(r => {
+    const on = db.week.recipeIds.includes(r.id);
+    return `<button type="button" class="recipe-pick ${on ? "on" : ""}" data-id="${r.id}">
+      <span>${escapeHtml(r.name)} <small>${r.ingredients.length} items${r.servings ? " · " + escapeHtml(r.servings) : ""}</small></span>
+      <span>${on ? "In" : "Add"}</span>
+    </button>`;
+  }).join("");
+  el.querySelectorAll(".recipe-pick").forEach(btn => btn.onclick = () => toggleRecipe(btn.dataset.id));
+}
+function toggleRecipe(id) {
+  const ids = db.week.recipeIds;
+  db.week.recipeIds = ids.includes(id) ? ids.filter(x => x !== id) : [...ids, id];
+  save(); render();
+}
+
+function renderExtras() {
+  const el = document.getElementById("extras");
+  if (!db.week.extras.length) { el.innerHTML = "<p class='muted'>None this week.</p>"; return; }
+  el.innerHTML = db.week.extras.map(e => `<div class="split" style="padding:6px 0; border-bottom:1px solid var(--line)">
+    <span>${escapeHtml([e.qty, e.item].filter(Boolean).join(" "))}</span>
+    <button class="icon-btn" data-id="${e.id}" type="button">×</button>
+  </div>`).join("");
+  el.querySelectorAll("button").forEach(b => b.onclick = () => {
+    db.week.extras = db.week.extras.filter(x => x.id !== b.dataset.id);
+    save(); render();
+  });
+}
+function renderStaples() {
+  const el = document.getElementById("staples");
+  if (!db.staples.length) { el.innerHTML = "<p class='muted'>No staples yet.</p>"; return; }
+  el.innerHTML = db.staples.map(s => `<div class="split" style="padding:6px 0">
+    <button type="button" class="staple ${s.on ? "on" : ""}" data-id="${s.id}">${s.on ? "On" : "Off"} · ${escapeHtml([s.qty, s.item].filter(Boolean).join(" "))}</button>
+    <button class="icon-btn" data-del="${s.id}" type="button">×</button>
+  </div>`).join("");
+  el.querySelectorAll(".staple").forEach(b => b.onclick = () => {
+    const s = db.staples.find(x => x.id === b.dataset.id); s.on = !s.on; save(); render();
+  });
+  el.querySelectorAll("[data-del]").forEach(b => b.onclick = () => {
+    db.staples = db.staples.filter(x => x.id !== b.dataset.del); save(); render();
+  });
+}
+
+function generated() {
+  const map = new Map();
+  function add(it, source) {
+    const k = keyOf(it);
+    if (!k) return;
+    if (db.week.removed.includes(k)) return;
+    const edit = db.week.edits[k];
+    const base = edit ? { ...it, ...edit } : it;
+    if (!map.has(k)) map.set(k, { ...base, sources: [source], key: k });
+    else map.get(k).sources.push(source);
+  }
+  db.week.recipeIds.forEach(id => {
+    const r = db.recipes.find(x => x.id === id);
+    if (!r) return;
+    r.ingredients.forEach(ing => add(ing, r.name));
+  });
+  db.staples.filter(s => s.on).forEach(s => add(s, "Staple"));
+  db.week.extras.forEach(e => add(e, "One-liner"));
+  return [...map.values()];
+}
+function visibleItems() { return generated().filter(it => !db.week.checks[it.key]); }
+
+function renderReview() {
+  const items = generated();
+  const el = document.getElementById("reviewList");
+  if (!items.length) {
+    el.innerHTML = `<div class="empty">Nothing on the list. Pick recipes or add a one-liner, then come back here.</div>`;
+    paintPrint([]);
+    return;
+  }
+  const groups = AISLES.map(a => ({ aisle: a, items: items.filter(i => (i.aisle || "Other") === a) })).filter(g => g.items.length);
+  el.innerHTML = groups.map(g => `<div class="list-section"><div class="aisle">${g.aisle}</div>` + g.items.map(it => {
+    const checked = !!db.week.checks[it.key];
+    return `<div class="item ${checked ? "checked" : ""}">
+      <input type="checkbox" data-check="${it.key}" ${checked ? "checked" : ""} />
+      <div>
+        <div class="item-text">${escapeHtml([it.qty, it.item].filter(Boolean).join(" "))}</div>
+        <span class="src">${escapeHtml([...new Set(it.sources)].join(" · "))}</span>
+      </div>
+      <button class="btn ghost small" data-drop="${it.key}" type="button">Remove</button>
+    </div>`;
+  }).join("") + `</div>`).join("");
+  el.querySelectorAll("[data-check]").forEach(box => box.onchange = () => {
+    db.week.checks[box.dataset.check] = box.checked; save(); render();
+  });
+  el.querySelectorAll("[data-drop]").forEach(btn => btn.onclick = () => {
+    db.week.removed.push(btn.dataset.drop); save(); render();
+  });
+  paintPrint(items.filter(it => !db.week.checks[it.key]));
+}
+function paintPrint(items) {
+  const groups = AISLES.map(a => ({ aisle: a, items: items.filter(i => (i.aisle || "Other") === a) })).filter(g => g.items.length);
+  const recipes = db.recipes.filter(r => db.week.recipeIds.includes(r.id)).map(r => r.name);
+  document.getElementById("print-sheet").innerHTML = `
+    <div class="print-head">
+      <h1>${escapeHtml(db.week.name || "Grocery list")}</h1>
+      <div>${new Date().toLocaleDateString()}</div>
+    </div>
+    <p class="print-cook">${recipes.length ? "Cooking: " + escapeHtml(recipes.join(", ")) : ""}</p>
+    <div class="print-cols">
+    ${groups.map(g => `<div class="print-group"><div class="print-aisle">${g.aisle}</div>` + g.items.map(it =>
+      `<div class="print-item"><span class="print-box"></span><span>${escapeHtml([it.qty, it.item].filter(Boolean).join(" "))}</span></div>`
+    ).join("") + `</div>`).join("")}
+    </div>
+  `;
+}
+
+function renderRecipeCards() {
+  const el = document.getElementById("recipeCards");
+  if (!db.recipes.length) {
+    el.innerHTML = `<div class="empty">The recipe box is empty. A recipe is just a name and a pile of ingredient lines.</div>`;
+    return;
+  }
+  el.innerHTML = db.recipes.map(r => `<article class="card recipe-card">
+    <h3>${escapeHtml(r.name)}</h3>
+    <div class="muted">${r.servings ? escapeHtml(r.servings) + " · " : ""}${r.ingredients.length} ingredients</div>
+    ${r.notes ? `<p>${escapeHtml(r.notes)}</p>` : ""}
+    <ul>${r.ingredients.slice(0, 6).map(i => `<li>${escapeHtml([i.qty, i.item].filter(Boolean).join(" "))}</li>`).join("")}${r.ingredients.length > 6 ? "<li>…</li>" : ""}</ul>
+    <button class="btn ghost small" data-edit="${r.id}" type="button">Edit</button>
+  </article>`).join("");
+  el.querySelectorAll("[data-edit]").forEach(b => b.onclick = () => openRecipe(b.dataset.edit));
+}
+
+function openRecipe(id) {
+  editingId = id || null;
+  const r = db.recipes.find(x => x.id === id) || { name: "", servings: "", notes: "", ingredients: [item("", "", "Other")] };
+  document.getElementById("recipeDialogTitle").textContent = id ? "Edit recipe" : "New recipe";
+  document.getElementById("rName").value = r.name || "";
+  document.getElementById("rServings").value = r.servings || "";
+  document.getElementById("rNotes").value = r.notes || "";
+  document.getElementById("deleteRecipe").classList.toggle("hidden", !id);
+  paintIngs(r.ingredients.length ? r.ingredients : [item("", "", "Other")]);
+  document.getElementById("recipeDialog").showModal();
+}
+function paintIngs(ings) {
+  const el = document.getElementById("ingEditor");
+  el.innerHTML = ings.map((ing, idx) => `<div class="ing-row">
+    <input data-q="${idx}" type="text" placeholder="Qty" value="${escapeAttr(ing.qty)}" />
+    <input data-i="${idx}" type="text" placeholder="Ingredient" value="${escapeAttr(ing.item)}" />
+    <select data-a="${idx}">${AISLES.map(a => `<option ${a === (ing.aisle || guessAisle(ing.item)) ? "selected" : ""}>${a}</option>`).join("")}</select>
+    <button class="icon-btn" data-x="${idx}" type="button">×</button>
+  </div>`).join("");
+  el.querySelectorAll("[data-x]").forEach(b => b.onclick = () => {
+    const next = readIngs().filter((_, i) => i !== Number(b.dataset.x));
+    paintIngs(next.length ? next : [item("", "", "Other")]);
+  });
+  el.querySelectorAll("[data-i]").forEach(inp => inp.onchange = () => {
+    const sel = el.querySelector(`[data-a="${inp.dataset.i}"]`);
+    if (sel && sel.value === "Other") sel.value = guessAisle(inp.value);
+  });
+}
+function readIngs() {
+  return [...document.querySelectorAll("#ingEditor .ing-row")].map(row => ({
+    id: uid(),
+    qty: row.querySelector("[data-q]").value.trim(),
+    item: row.querySelector("[data-i]").value.trim(),
+    aisle: row.querySelector("[data-a]").value
+  })).filter(i => i.item);
+}
+
+function escapeHtml(s) {
+  return String(s ?? "").replace(/[&<>"']/g, function (c) {
+    return {
+      "&": "\u0026amp;",
+      "<": "\u0026lt;",
+      ">": "\u0026gt;",
+      '"': "\u0026quot;",
+      "'": "\u0026#39;"
+    }[c];
+  });
+}
+function escapeAttr(s) { return escapeHtml(s); }
+
+document.querySelectorAll(".tabs button").forEach(btn => btn.onclick = () => {
+  document.querySelectorAll(".tabs button").forEach(b => b.classList.toggle("active", b === btn));
+  ["plan","list","recipes"].forEach(name => document.getElementById("tab-" + name).classList.toggle("hidden", btn.dataset.tab !== name));
+  if (btn.dataset.tab === "list") renderReview();
+});
+document.getElementById("weekName").onchange = e => { db.week.name = e.target.value; save(); };
+document.getElementById("clearPicks").onclick = () => { db.week.recipeIds = []; save(); render(); };
+document.getElementById("saveTemplate").onclick = () => {
+  const name = document.getElementById("templateName").value.trim();
+  if (!name) return alert("Name the template first.");
+  db.templates = db.templates.filter(t => t.name !== name);
+  db.templates.push({ id: uid(), name, recipeIds: [...db.week.recipeIds], extras: db.week.extras.map(({qty, item, aisle}) => ({qty, item, aisle})) });
+  document.getElementById("templateName").value = "";
+  save(); render();
+};
+document.getElementById("extraItem").addEventListener("keydown", e => {
+  if (e.key !== "Enter") return;
+  e.preventDefault();
+  const itemName = e.target.value.trim();
+  if (!itemName) return;
+  db.week.extras.push(item(itemName, document.getElementById("extraQty").value.trim()));
+  e.target.value = "";
+  document.getElementById("extraQty").value = "";
+  save(); render();
+});
+document.getElementById("addStaple").onclick = () => {
+  const name = prompt("Staple item");
+  if (!name) return;
+  db.staples.push({ ...item(name, ""), on: true });
+  save(); render();
+};
+document.getElementById("goList").onclick = () => document.querySelector('[data-tab="list"]').click();
+document.getElementById("printBtn").onclick = () => window.print();
+document.getElementById("copyList").onclick = async () => {
+  const lines = visibleItems().map(it => `☐ ${[it.qty, it.item].filter(Boolean).join(" ")}`);
+  const text = `${db.week.name}\n\n${lines.join("\n")}`;
+  try { await navigator.clipboard.writeText(text); alert("Copied."); }
+  catch { prompt("Copy this list:", text); }
+};
+document.getElementById("newRecipe").onclick = () => openRecipe(null);
+document.getElementById("closeDialog").onclick = () => document.getElementById("recipeDialog").close();
+document.getElementById("addIng").onclick = () => paintIngs([...readIngs(), item("", "", "Other")]);
+document.getElementById("deleteRecipe").onclick = () => {
+  if (!editingId) return;
+  if (!confirm("Delete this recipe?")) return;
+  db.recipes = db.recipes.filter(r => r.id !== editingId);
+  db.week.recipeIds = db.week.recipeIds.filter(id => id !== editingId);
+  document.getElementById("recipeDialog").close();
+  save(); render();
+};
+document.getElementById("recipeForm").onsubmit = e => {
+  e.preventDefault();
+  const recipe = {
+    id: editingId || uid(),
+    name: document.getElementById("rName").value.trim(),
+    servings: document.getElementById("rServings").value.trim(),
+    notes: document.getElementById("rNotes").value.trim(),
+    ingredients: readIngs()
+  };
+  if (!recipe.name || !recipe.ingredients.length) return alert("Need a name and at least one ingredient.");
+  if (editingId) db.recipes = db.recipes.map(r => r.id === editingId ? recipe : r);
+  else db.recipes.push(recipe);
+  document.getElementById("recipeDialog").close();
+  save(); render();
+};
+document.getElementById("samplesBtn").onclick = () => {
+  const samples = [
+    { name: "Weeknight tacos", servings: "4", notes: "", ingredients: [
+      item("corn tortillas", "12", "Bakery"), item("ground beef", "1 lb", "Meat & fish"),
+      item("taco seasoning", "1 packet", "Pantry"), item("romaine", "1 head", "Produce"),
+      item("cheddar", "8 oz", "Dairy & eggs"), item("salsa", "1 jar", "Pantry")
+    ]},
+    { name: "Roast chicken & potatoes", servings: "4", notes: "Sunday", ingredients: [
+      item("whole chicken", "1", "Meat & fish"), item("potatoes", "2 lb", "Produce"),
+      item("lemon", "1", "Produce"), item("olive oil", "", "Pantry"), item("garlic", "1 head", "Produce")
+    ]},
+    { name: "Pasta night", servings: "4", notes: "", ingredients: [
+      item("spaghetti", "1 lb", "Pantry"), item("crushed tomatoes", "28 oz", "Pantry"),
+      item("onion", "1", "Produce"), item("parmesan", "", "Dairy & eggs"), item("basil", "1 bunch", "Produce")
+    ]}
+  ];
+  samples.forEach(s => db.recipes.push({ ...s, id: uid() }));
+  save(); render();
+};
+document.getElementById("exportBtn").onclick = () => {
+  const blob = new Blob([JSON.stringify(db, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "weeklist-backup.json";
+  a.click();
+};
+document.getElementById("importBtn").onclick = () => document.getElementById("importFile").click();
+document.getElementById("importFile").onchange = async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const next = JSON.parse(await file.text());
+  if (!next.recipes || !next.week) return alert("That file doesn’t look like a Weeklist backup.");
+  db = next; save(); render();
+};
+
+render();
+</script>
+</body>
+</html>
