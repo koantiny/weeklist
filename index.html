@@ -50,8 +50,8 @@
   .week-name:focus { outline: none; border-bottom-color: var(--tomato); }
   .top-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
   .tabs {
-    display: flex; gap: 6px; background: rgba(255,253,248,0.7); padding: 6px;
-    border-radius: 999px; width: fit-content; margin-bottom: 18px; border: 1px solid var(--line);
+    display: flex; gap: 6px; flex-wrap: wrap; background: rgba(255,253,248,0.7); padding: 6px;
+    border-radius: 999px; width: fit-content; max-width: 100%; margin-bottom: 18px; border: 1px solid var(--line);
   }
   .tabs button {
     border: 0; background: transparent; border-radius: 999px; padding: 10px 16px; font-weight: 750;
@@ -64,7 +64,8 @@
   }
   .card h2 { font-size: 26px; margin-bottom: 4px; }
   .sub { color: var(--muted); margin: 0 0 14px; font-size: 14.5px; }
-  .row { display: flex; gap: 8px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .row > input { flex: 1 1 140px; min-width: 0; }
   input[type="text"], input[type="number"], textarea, select {
     width: 100%; background: #fff; border: 1px solid #e3d8c6; border-radius: 12px; padding: 11px 12px;
   }
@@ -96,11 +97,12 @@
   }
   .item {
     display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: start;
-    padding: 10px 0; border-bottom: 1px solid var(--line);
+    padding: 10px 8px; border-bottom: 1px solid var(--line);
   }
   .item.checked .item-text { text-decoration: line-through; color: var(--muted); }
+  .item.has-coupon { background: #fff6df; border-radius: 12px; }
   .item input[type="checkbox"] { width: 18px; height: 18px; margin-top: 4px; accent-color: var(--sage); }
-  .item-text { font-size: 17px; }
+  .item-text { font-size: 17px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
   .src { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
   .empty {
     border: 1px dashed #d7cbb8; border-radius: 14px; padding: 18px; color: var(--muted); background: #fffaf2;
@@ -110,6 +112,34 @@
   .recipe-card ul { margin: 8px 0 12px; padding-left: 18px; }
   .recipe-card li { margin: 3px 0; }
   .split { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+  .days { display: flex; flex-direction: column; }
+  .day-row {
+    display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 4px 10px;
+    align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line);
+  }
+  .day-row label { font-weight: 800; }
+  .day-side { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .day-new { display: flex; gap: 8px; flex-wrap: wrap; }
+  .day-new input { flex: 1 1 140px; min-width: 0; }
+  .text-btn {
+    border: 0; background: transparent; padding: 0; width: fit-content;
+    font-weight: 750; color: var(--sage); text-decoration: underline; text-underline-offset: 2px;
+  }
+  .text-btn.warn { color: var(--tomato); }
+  .coupon-btn {
+    border: 1px solid #e4d8c4; background: #fff; color: var(--muted);
+    border-radius: 999px; padding: 4px 8px; display: inline-flex; align-items: center; gap: 4px;
+    line-height: 1;
+  }
+  .coupon-btn.on { background: var(--butter); border-color: #e2c98a; color: #6a4b12; font-weight: 800; }
+  .coupon-word { display: none; font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .coupon-btn.on .coupon-word { display: inline; }
+  .item-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+  .edit-pop { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+  .edit-pop input { width: auto; flex: 1; min-width: 88px; }
+  .hint { flex-basis: 100%; margin: 0; font-size: 12px; }
+  .added-line { padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .meal-line { margin: -6px 0 12px; }
   dialog {
     border: 0; border-radius: 20px; padding: 0; width: min(640px, calc(100% - 24px));
     box-shadow: 0 24px 80px rgba(40, 24, 10, 0.25);
@@ -126,6 +156,9 @@
     .ing-row { grid-template-columns: 78px 1fr 36px; }
     .ing-row select { grid-column: 1 / -1; }
     .app { padding: 18px 14px 88px; }
+    .day-row { grid-template-columns: 1fr; }
+    .item { grid-template-columns: 28px 1fr; }
+    .item-actions { grid-column: 2; justify-content: flex-start; }
   }
   @media print {
     @page { size: letter; margin: 0.4in; }
@@ -149,6 +182,11 @@
       font-size: 11pt; line-height: 1.2; padding: 1px 0; break-inside: avoid;
     }
     .print-box { width: 10px; height: 10px; border: 1px solid #1a140e; flex: 0 0 10px; margin: 3px 0 0; }
+    .print-coupon {
+      font-family: "Nunito Sans", "Segoe UI", sans-serif;
+      font-size: 8pt; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase;
+      border: 1px solid #1a140e; border-radius: 2px; padding: 0 3px; margin-right: 5px;
+    }
   }
   #print-sheet { display: none; }
   .print-head { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #241c14; margin-bottom: 8px; }
@@ -183,21 +221,21 @@
       <div class="grid">
         <div class="card">
           <div class="split">
-            <h2>Recipes for the week</h2>
-            <button class="btn ghost small" id="clearPicks" type="button">Clear picks</button>
+            <h2>Meals this week</h2>
+            <button class="btn ghost small" id="clearPicks" type="button">Clear days</button>
           </div>
-          <p class="sub">Tap what you’re cooking. The list is built from these, plus staples and one-liners.</p>
+          <p class="sub">One recipe each day, Sunday through Saturday. Pick a saved recipe, or type a name you have not added yet. The list fills in only when that recipe has items.</p>
           <div class="chips" id="templateChips"></div>
-          <div class="recipe-list" id="planRecipes"></div>
+          <div class="days" id="planDays"></div>
           <div class="row" style="margin-top:14px">
-            <input id="templateName" type="text" placeholder="Save these picks as a template, e.g. Normal week" />
+            <input id="templateName" type="text" placeholder="Save these days as a template, e.g. Normal week" />
             <button class="btn ghost" id="saveTemplate" type="button">Save template</button>
           </div>
         </div>
         <div>
           <div class="card">
             <h2>One-liners</h2>
-            <p class="sub">Anything that isn’t from a recipe. Milk, dishwasher tabs, the thing you remembered in the car.</p>
+            <p class="sub">Anything that isn’t from a recipe. A quantity of 3 shows on the list as (x3).</p>
             <div class="row">
               <input id="extraQty" type="text" placeholder="Qty" style="max-width:90px" />
               <input id="extraItem" type="text" placeholder="Add an item and press Enter" />
@@ -207,10 +245,14 @@
           <div class="card" style="margin-top:16px">
             <div class="split">
               <h2>Staples</h2>
-              <button class="btn ghost small" id="addStaple" type="button">Add staple</button>
+              <button class="btn ghost small" id="addStaple" type="button">Add</button>
             </div>
             <p class="sub">Pinned items. Turn them off for a week you already have them.</p>
-            <div id="staples"></div>
+            <div class="row">
+              <input id="stapleQty" type="text" placeholder="Qty" style="max-width:90px" />
+              <input id="stapleItem" type="text" placeholder="Add a staple and press Enter" />
+            </div>
+            <div id="staples" style="margin-top:10px"></div>
           </div>
           <button class="btn tomato" id="goList" type="button" style="width:100%; margin-top:16px">Review the list</button>
         </div>
@@ -222,13 +264,14 @@
         <div class="split">
           <div>
             <h2>Before the shop</h2>
-            <p class="sub">Strike what you already have. What’s left is the printout.</p>
+            <p class="sub">Strike what you already have. The ticket marks a coupon. What’s left is the printout.</p>
           </div>
           <div class="row no-print">
             <button class="btn ghost" id="copyList" type="button">Copy</button>
             <button class="btn tomato" id="printBtn" type="button">Print</button>
           </div>
         </div>
+        <p class="meal-line muted" id="mealLine"></p>
         <div id="reviewList"></div>
       </div>
     </section>
@@ -237,7 +280,7 @@
       <div class="split" style="margin-bottom:12px">
         <div>
           <h2>Recipe box</h2>
-          <p class="sub">Save a recipe once. Reuse it every week it shows up.</p>
+          <p class="sub">Save a recipe once. A day can name it before the items are filled in.</p>
         </div>
         <div class="row">
           <button class="btn ghost" id="samplesBtn" type="button">Add 3 samples</button>
@@ -258,7 +301,7 @@
       <h2 id="recipeDialogTitle">New recipe</h2>
       <button class="btn ghost small" type="button" id="closeDialog">Close</button>
     </div>
-    <p class="sub">Ingredients are one line each. Quantity is optional.</p>
+    <p class="sub">One ingredient each line. A quantity of 3 shows on the list as (x3). Measures such as 1 lb stay with the item.</p>
     <input id="rName" type="text" placeholder="Recipe name" required />
     <div class="row" style="margin-top:8px">
       <input id="rServings" type="text" placeholder="Servings, e.g. 4" />
@@ -275,6 +318,8 @@
 
 <script>
 const AISLES = ["Produce","Bakery","Meat & fish","Dairy & eggs","Frozen","Pantry","Snacks","Drinks","Household","Other"];
+const DAY_KEYS = ["sun","mon","tue","wed","thu","fri","sat"];
+const DAY_LABELS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const KEYWORDS = [
   ["Produce", "apple banana berry berries grape lemon lime orange avocado tomato potato onion garlic lettuce spinach kale salad herb cilantro parsley basil cucumber pepper carrot broccoli celery mushroom zucchini squash cabbage avocado lime melon peach pear plum greens scallion shallot ginger"],
   ["Bakery", "bread loaf roll bagel tortilla bun pita naan croissant muffin cake pastry"],
@@ -290,17 +335,26 @@ const KEYWORDS = [
 const storeKey = "weeklist-v1";
 let db = load();
 let editingId = null;
+let namingDay = null;
+let namingDraft = "";
+let focusNaming = false;
+let lineEditKey = null;
+let extraEditId = null;
+let stapleEditId = null;
 
 function uid() { return Math.random().toString(36).slice(2, 9); }
 function load() {
   try {
     const raw = localStorage.getItem(storeKey);
-    if (raw) return JSON.parse(raw);
+    if (raw) return normalize(JSON.parse(raw));
   } catch (e) {}
   return blank();
 }
+function blankDays() {
+  return { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null };
+}
 function blank() {
-  return {
+  return normalize({
     recipes: [],
     staples: [
       item("milk", "1", "Dairy & eggs"),
@@ -308,17 +362,42 @@ function blank() {
       item("bananas", "", "Produce")
     ].map(s => ({...s, on: true})),
     templates: [],
-    week: { name: defaultWeekName(), recipeIds: [], extras: [], removed: [], checks: {}, edits: {} }
-  };
+    week: { name: defaultWeekName(), days: blankDays(), extras: [], removed: [], checks: {}, edits: {}, coupons: {} }
+  });
+}
+function normalize(data) {
+  data.recipes = data.recipes || [];
+  data.staples = data.staples || [];
+  data.templates = data.templates || [];
+  data.week = data.week || {};
+  const w = data.week;
+  w.name = w.name || defaultWeekName();
+  w.extras = w.extras || [];
+  w.removed = w.removed || [];
+  w.checks = w.checks || {};
+  w.edits = w.edits || {};
+  w.coupons = w.coupons || {};
+  if (!w.days) {
+    w.days = blankDays();
+    (w.recipeIds || []).slice(0, 7).forEach((id, i) => { w.days[DAY_KEYS[i]] = id; });
+  }
+  DAY_KEYS.forEach(k => {
+    const id = w.days[k];
+    w.days[k] = id && data.recipes.some(r => r.id === id) ? id : null;
+  });
+  return data;
 }
 function item(name, qty, aisle) {
-  return { id: uid(), qty: qty || "", item: name, aisle: aisle || guessAisle(name) };
+  return { id: uid(), qty: qty || "", item: name, aisle: aisle || guessAisle(name), coupon: false };
 }
 function defaultWeekName() {
   const d = new Date();
   return "Week of " + d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
-function save() { localStorage.setItem(storeKey, JSON.stringify(db)); }
+function save() {
+  db.week.recipeIds = plannedIds();
+  localStorage.setItem(storeKey, JSON.stringify(db));
+}
 function guessAisle(text) {
   const t = (text || "").toLowerCase();
   for (const [aisle, words] of KEYWORDS) {
@@ -328,22 +407,101 @@ function guessAisle(text) {
 }
 function norm(s) { return (s || "").trim().toLowerCase().replace(/\s+/g, " "); }
 function keyOf(it) { return norm(it.item); }
+function recipeById(id) { return id ? db.recipes.find(r => r.id === id) : null; }
+function plannedIds() { return DAY_KEYS.map(k => db.week.days[k]).filter(Boolean); }
+function ticketIcon() {
+  return `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M3 8.5A2.5 2.5 0 0 1 5.5 6h13A2.5 2.5 0 0 1 21 8.5V10a2 2 0 0 0 0 4v1.5a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 15.5V14a2 2 0 0 0 0-4V8.5z"/><path stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="0.1 3.2" d="M9 12h6"/></svg>`;
+}
+function couponButton(on, attr, id) {
+  return `<button class="coupon-btn ${on ? "on" : ""}" type="button" aria-label="Coupon" aria-pressed="${on ? "true" : "false"}" ${attr}="${escapeAttr(id)}">${ticketIcon()}<span class="coupon-word">Coupon</span></button>`;
+}
+
+function parseQty(qty) {
+  const original = String(qty ?? "").trim();
+  if (!original) return null;
+  let s = original.replace(/^\(+|\)+$/g, "").trim();
+  if (/^x\s*\d/i.test(s)) s = s.replace(/^x\s*/i, "");
+  let m = s.match(/^(\d+)\s+(\d+)\/(\d+)\s*(.*)$/);
+  if (m) return qtyParts(Number(m[1]) + Number(m[2]) / Number(m[3]), m[4]);
+  m = s.match(/^(\d+)\/(\d+)\s*(.*)$/);
+  if (m) return qtyParts(Number(m[1]) / Number(m[2]), m[3]);
+  m = s.match(/^(\d*\.?\d+)\s*([a-zA-Z].*)?$/);
+  if (!m || !m[1] || m[1] === ".") return { raw: original };
+  return qtyParts(Number(m[1]), m[2] || "");
+}
+function qtyParts(n, unit) {
+  if (!Number.isFinite(n)) return { raw: String(unit || n) };
+  const u = String(unit || "").trim();
+  return { n, unit: u, unitKey: u.toLowerCase() };
+}
+function formatNum(n) {
+  const rounded = Math.round(n * 1000) / 1000;
+  if (Math.abs(rounded - Math.round(rounded)) < 1e-9) return String(Math.round(rounded));
+  return String(rounded);
+}
+// Matching units add together. Different units stay on one line, joined with +.
+function qtyPresentation(qtys) {
+  const parts = (qtys || []).map(parseQty).filter(Boolean);
+  if (!parts.length) return { label: "", edit: "" };
+  const groups = new Map();
+  const raws = [];
+  for (const p of parts) {
+    if (p.raw) { raws.push(p.raw); continue; }
+    const g = groups.get(p.unitKey) || { n: 0, unit: p.unit };
+    g.n += p.n;
+    groups.set(p.unitKey, g);
+  }
+  const editBits = [];
+  for (const g of groups.values()) editBits.push(g.unit ? `${formatNum(g.n)} ${g.unit}` : formatNum(g.n));
+  for (const raw of raws) editBits.push(raw);
+  if (!raws.length && groups.size === 1) {
+    const g = [...groups.values()][0];
+    const n = formatNum(g.n);
+    return { label: g.unit ? `(x${n} ${g.unit})` : `(x${n})`, edit: g.unit ? `${n} ${g.unit}` : n };
+  }
+  const shown = [];
+  for (const g of groups.values()) {
+    const n = formatNum(g.n);
+    shown.push(g.unit ? `x${n} ${g.unit}` : `x${n}`);
+  }
+  for (const raw of raws) shown.push(raw);
+  return { label: `(${shown.join(" + ")})`, edit: editBits.join(" + ") };
+}
+function formatItem(name, qty) {
+  const { label } = qtyPresentation([qty]);
+  const text = String(name || "").trim();
+  return label ? `${text} ${label}` : text;
+}
 
 function render() {
   document.getElementById("weekName").value = db.week.name || defaultWeekName();
   renderTemplates();
-  renderPlanRecipes();
+  renderDays();
   renderExtras();
   renderStaples();
   renderReview();
   renderRecipeCards();
+  paintMealLine();
   document.getElementById("listCount").textContent = visibleItems().length;
+}
+
+function mealSummary() {
+  return DAY_KEYS.map((k, i) => {
+    const r = recipeById(db.week.days[k]);
+    return r ? `${DAY_LABELS[i]}: ${r.name}` : null;
+  }).filter(Boolean).join(" · ");
+}
+function paintMealLine() {
+  const el = document.getElementById("mealLine");
+  const text = mealSummary();
+  el.textContent = text;
+  el.classList.toggle("hidden", !text);
 }
 
 function renderTemplates() {
   const el = document.getElementById("templateChips");
   if (!db.templates.length) {
-    el.innerHTML = "<span class='muted'>No templates yet. Pick recipes, then save the set.</span>";
+    el.innerHTML = "<span class='muted'>No templates yet. Plan the days, then save the set.</span>";
     return;
   }
   el.innerHTML = db.templates.map(t => `<button type="button" class="chip" data-template="${t.id}">${escapeHtml(t.name)}</button>`).join("") +
@@ -352,15 +510,31 @@ function renderTemplates() {
   const manage = document.getElementById("manageTemplates");
   if (manage) manage.onclick = manageTemplates;
 }
+function daysFromTemplate(t) {
+  const days = blankDays();
+  if (t.days) {
+    DAY_KEYS.forEach(k => {
+      const id = t.days[k];
+      days[k] = id && db.recipes.some(r => r.id === id) ? id : null;
+    });
+    return days;
+  }
+  (t.recipeIds || []).slice(0, 7).forEach((id, i) => {
+    if (db.recipes.some(r => r.id === id)) days[DAY_KEYS[i]] = id;
+  });
+  return days;
+}
 function applyTemplate(id) {
   const t = db.templates.find(x => x.id === id);
   if (!t) return;
-  db.week.recipeIds = [...t.recipeIds];
-  db.week.extras = t.extras.map(e => ({...e, id: uid()}));
+  db.week.days = daysFromTemplate(t);
+  db.week.extras = (t.extras || []).map(e => ({...e, id: uid(), coupon: !!e.coupon}));
   db.week.removed = [];
   db.week.checks = {};
   db.week.edits = {};
+  db.week.coupons = {};
   db.week.name = t.name;
+  namingDay = null;
   save(); render();
 }
 function manageTemplates() {
@@ -371,116 +545,412 @@ function manageTemplates() {
   if (n && db.templates[i]) { db.templates.splice(i, 1); save(); render(); }
 }
 
-function renderPlanRecipes() {
-  const el = document.getElementById("planRecipes");
-  if (!db.recipes.length) {
-    el.innerHTML = `<div class="empty">No recipes yet. Add one in Recipes, or drop in the samples to see the loop.</div>`;
-    return;
-  }
-  el.innerHTML = db.recipes.map(r => {
-    const on = db.week.recipeIds.includes(r.id);
-    return `<button type="button" class="recipe-pick ${on ? "on" : ""}" data-id="${r.id}">
-      <span>${escapeHtml(r.name)} <small>${r.ingredients.length} items${r.servings ? " · " + escapeHtml(r.servings) : ""}</small></span>
-      <span>${on ? "In" : "Add"}</span>
-    </button>`;
+function renderDays() {
+  const el = document.getElementById("planDays");
+  const optionsFor = selectedId => {
+    const recipes = [...db.recipes].sort((a, b) => a.name.localeCompare(b.name));
+    return [`<option value="">No recipe</option>`]
+      .concat(recipes.map(r => `<option value="${escapeAttr(r.id)}" ${r.id === selectedId ? "selected" : ""}>${escapeHtml(r.name)}</option>`))
+      .concat(`<option value="__new">Type a new one…</option>`)
+      .join("");
+  };
+  el.innerHTML = DAY_KEYS.map((key, i) => {
+    const id = db.week.days[key];
+    const recipe = recipeById(id);
+    const naming = namingDay === key;
+    const control = naming
+      ? `<div class="day-new">
+          <input data-new-day="${key}" type="text" placeholder="Recipe name" value="${escapeAttr(namingDraft)}" aria-label="${DAY_LABELS[i]} recipe name" />
+          <button class="btn small" type="button" data-save-day="${key}">Add</button>
+          <button class="btn ghost small" type="button" data-cancel-day>Cancel</button>
+        </div>`
+      : `<select id="day-${key}" data-day="${key}" aria-label="${DAY_LABELS[i]}">${optionsFor(id)}</select>`;
+    const meta = !naming && recipe
+      ? `<button type="button" class="text-btn ${recipe.ingredients.length ? "" : "warn"}" data-open-recipe="${recipe.id}">${recipe.ingredients.length ? recipe.ingredients.length + " items · Edit" : "No items yet · Add"}</button>`
+      : "";
+    return `<div class="day-row">
+      <label for="day-${key}">${DAY_LABELS[i]}</label>
+      <div class="day-side">${control}${meta}</div>
+    </div>`;
   }).join("");
-  el.querySelectorAll(".recipe-pick").forEach(btn => btn.onclick = () => toggleRecipe(btn.dataset.id));
+  el.querySelectorAll("select[data-day]").forEach(sel => sel.onchange = () => {
+    const day = sel.dataset.day;
+    if (sel.value === "__new") {
+      namingDay = day;
+      namingDraft = "";
+      focusNaming = true;
+      render();
+      return;
+    }
+    db.week.days[day] = sel.value || null;
+    save(); render();
+  });
+  el.querySelectorAll("[data-open-recipe]").forEach(btn => btn.onclick = () => openRecipe(btn.dataset.openRecipe));
+  el.querySelectorAll("[data-save-day]").forEach(btn => btn.onclick = () => commitNewDay(btn.dataset.saveDay));
+  el.querySelectorAll("[data-cancel-day]").forEach(btn => btn.onclick = () => {
+    namingDay = null; namingDraft = ""; render();
+  });
+  const typed = el.querySelector("[data-new-day]");
+  if (typed) {
+    typed.oninput = () => { namingDraft = typed.value; };
+    typed.onkeydown = e => {
+      if (e.key === "Enter") { e.preventDefault(); commitNewDay(typed.dataset.newDay); }
+      if (e.key === "Escape") { namingDay = null; namingDraft = ""; render(); }
+    };
+    if (focusNaming) { typed.focus(); focusNaming = false; }
+  }
 }
-function toggleRecipe(id) {
-  const ids = db.week.recipeIds;
-  db.week.recipeIds = ids.includes(id) ? ids.filter(x => x !== id) : [...ids, id];
+function commitNewDay(day) {
+  const typed = document.querySelector(`[data-new-day="${day}"]`);
+  const name = ((typed && typed.value) || namingDraft || "").trim();
+  if (!name) return;
+  let recipe = db.recipes.find(r => norm(r.name) === norm(name));
+  if (!recipe) {
+    recipe = { id: uid(), name, servings: "", notes: "", ingredients: [] };
+    db.recipes.push(recipe);
+  }
+  db.week.days[day] = recipe.id;
+  namingDay = null;
+  namingDraft = "";
   save(); render();
 }
 
 function renderExtras() {
   const el = document.getElementById("extras");
   if (!db.week.extras.length) { el.innerHTML = "<p class='muted'>None this week.</p>"; return; }
-  el.innerHTML = db.week.extras.map(e => `<div class="split" style="padding:6px 0; border-bottom:1px solid var(--line)">
-    <span>${escapeHtml([e.qty, e.item].filter(Boolean).join(" "))}</span>
-    <button class="icon-btn" data-id="${e.id}" type="button">×</button>
-  </div>`).join("");
-  el.querySelectorAll("button").forEach(b => b.onclick = () => {
-    db.week.extras = db.week.extras.filter(x => x.id !== b.dataset.id);
+  el.innerHTML = db.week.extras.map(e => {
+    if (extraEditId === e.id) {
+      return `<div class="edit-pop">
+        <input data-extra-qty type="text" placeholder="Qty" value="${escapeAttr(e.qty)}" aria-label="Quantity" />
+        <input data-extra-name type="text" placeholder="Item" value="${escapeAttr(e.item)}" aria-label="Item" />
+        <button class="btn small" type="button" data-save-extra="${e.id}">Save</button>
+        <button class="btn ghost small" type="button" data-cancel-extra>Cancel</button>
+      </div>`;
+    }
+    return `<div class="added-line split">
+      <span class="item-text">${escapeHtml(formatItem(e.item, e.qty))}${couponButton(!!e.coupon, "data-coupon-extra", e.id)}</span>
+      <span class="item-actions">
+        <button class="btn ghost small" type="button" data-edit-extra="${e.id}">Edit</button>
+        <button class="icon-btn" data-del-extra="${e.id}" type="button" aria-label="Remove">×</button>
+      </span>
+    </div>`;
+  }).join("");
+  el.querySelectorAll("[data-coupon-extra]").forEach(btn => btn.onclick = () => {
+    const extra = db.week.extras.find(x => x.id === btn.dataset.couponExtra);
+    if (!extra) return;
+    extra.coupon = !extra.coupon;
+    db.week.coupons[norm(extra.item)] = extra.coupon;
+    save(); render();
+  });
+  el.querySelectorAll("[data-edit-extra]").forEach(btn => btn.onclick = () => { extraEditId = btn.dataset.editExtra; render(); });
+  el.querySelectorAll("[data-del-extra]").forEach(btn => btn.onclick = () => {
+    db.week.extras = db.week.extras.filter(x => x.id !== btn.dataset.delExtra);
+    save(); render();
+  });
+  el.querySelectorAll("[data-cancel-extra]").forEach(btn => btn.onclick = () => { extraEditId = null; render(); });
+  el.querySelectorAll("[data-save-extra]").forEach(btn => btn.onclick = () => {
+    const extra = db.week.extras.find(x => x.id === btn.dataset.saveExtra);
+    const wrap = btn.parentElement;
+    if (!extra) return;
+    const name = wrap.querySelector("[data-extra-name]").value.trim();
+    const qty = wrap.querySelector("[data-extra-qty]").value.trim();
+    if (!name) return;
+    const oldKey = norm(extra.item);
+    extra.qty = qty;
+    extra.item = name;
+    extra.aisle = guessAisle(name);
+    renameKey(oldKey, name);
+    extraEditId = null;
     save(); render();
   });
 }
 function renderStaples() {
   const el = document.getElementById("staples");
   if (!db.staples.length) { el.innerHTML = "<p class='muted'>No staples yet.</p>"; return; }
-  el.innerHTML = db.staples.map(s => `<div class="split" style="padding:6px 0">
-    <button type="button" class="staple ${s.on ? "on" : ""}" data-id="${s.id}">${s.on ? "On" : "Off"} · ${escapeHtml([s.qty, s.item].filter(Boolean).join(" "))}</button>
-    <button class="icon-btn" data-del="${s.id}" type="button">×</button>
-  </div>`).join("");
+  el.innerHTML = db.staples.map(s => {
+    if (stapleEditId === s.id) {
+      return `<div class="edit-pop">
+        <input data-staple-qty type="text" placeholder="Qty" value="${escapeAttr(s.qty)}" aria-label="Quantity" />
+        <input data-staple-name type="text" placeholder="Item" value="${escapeAttr(s.item)}" aria-label="Item" />
+        <button class="btn small" type="button" data-save-staple="${s.id}">Save</button>
+        <button class="btn ghost small" type="button" data-cancel-staple>Cancel</button>
+      </div>`;
+    }
+    return `<div class="added-line split">
+      <button type="button" class="staple ${s.on ? "on" : ""}" data-id="${s.id}">${s.on ? "On" : "Off"}</button>
+      <span class="item-text" style="flex:1">${escapeHtml(formatItem(s.item, s.qty))}${couponButton(!!s.coupon, "data-coupon-staple", s.id)}</span>
+      <span class="item-actions">
+        <button class="btn ghost small" type="button" data-edit-staple="${s.id}">Edit</button>
+        <button class="icon-btn" data-del-staple="${s.id}" type="button" aria-label="Remove">×</button>
+      </span>
+    </div>`;
+  }).join("");
   el.querySelectorAll(".staple").forEach(b => b.onclick = () => {
-    const s = db.staples.find(x => x.id === b.dataset.id); s.on = !s.on; save(); render();
+    const s = db.staples.find(x => x.id === b.dataset.id);
+    if (s) { s.on = !s.on; save(); render(); }
   });
-  el.querySelectorAll("[data-del]").forEach(b => b.onclick = () => {
-    db.staples = db.staples.filter(x => x.id !== b.dataset.del); save(); render();
+  el.querySelectorAll("[data-coupon-staple]").forEach(btn => btn.onclick = () => {
+    const s = db.staples.find(x => x.id === btn.dataset.couponStaple);
+    if (!s) return;
+    s.coupon = !s.coupon;
+    db.week.coupons[norm(s.item)] = s.coupon;
+    save(); render();
   });
+  el.querySelectorAll("[data-edit-staple]").forEach(btn => btn.onclick = () => { stapleEditId = btn.dataset.editStaple; render(); });
+  el.querySelectorAll("[data-del-staple]").forEach(btn => btn.onclick = () => {
+    db.staples = db.staples.filter(x => x.id !== btn.dataset.delStaple);
+    save(); render();
+  });
+  el.querySelectorAll("[data-cancel-staple]").forEach(btn => btn.onclick = () => { stapleEditId = null; render(); });
+  el.querySelectorAll("[data-save-staple]").forEach(btn => btn.onclick = () => {
+    const staple = db.staples.find(x => x.id === btn.dataset.saveStaple);
+    const wrap = btn.parentElement;
+    if (!staple) return;
+    const name = wrap.querySelector("[data-staple-name]").value.trim();
+    const qty = wrap.querySelector("[data-staple-qty]").value.trim();
+    if (!name) return;
+    const oldKey = norm(staple.item);
+    staple.qty = qty;
+    staple.item = name;
+    staple.aisle = guessAisle(name);
+    renameKey(oldKey, name);
+    stapleEditId = null;
+    save(); render();
+  });
+}
+function addNamed(list, name, qty, extra) {
+  const trimmed = (name || "").trim();
+  if (!trimmed) return;
+  list.push({ ...item(trimmed, qty), ...extra });
+  save(); render();
 }
 
 function generated() {
   const map = new Map();
-  function add(it, source) {
-    const k = keyOf(it);
+  function add(it, origin) {
+    const editPreview = db.week.edits[keyOf(it)];
+    const name = (editPreview && editPreview.item) || it.item;
+    const k = norm(name);
     if (!k) return;
-    if (db.week.removed.includes(k)) return;
-    const edit = db.week.edits[k];
-    const base = edit ? { ...it, ...edit } : it;
-    if (!map.has(k)) map.set(k, { ...base, sources: [source], key: k });
-    else map.get(k).sources.push(source);
+    if (db.week.removed.includes(k) || db.week.removed.includes(keyOf(it))) return;
+    if (!map.has(k)) {
+      map.set(k, {
+        ...it,
+        item: name,
+        aisle: (editPreview && editPreview.aisle) || it.aisle || "Other",
+        sources: [origin.label],
+        origins: [origin],
+        qtys: [it.qty || ""],
+        key: k,
+        coupon: !!it.coupon
+      });
+    } else {
+      const cur = map.get(k);
+      cur.sources.push(origin.label);
+      cur.origins.push(origin);
+      cur.qtys.push(it.qty || "");
+      cur.coupon = cur.coupon || !!it.coupon;
+    }
   }
-  db.week.recipeIds.forEach(id => {
-    const r = db.recipes.find(x => x.id === id);
+  DAY_KEYS.forEach((key, i) => {
+    const r = recipeById(db.week.days[key]);
     if (!r) return;
-    r.ingredients.forEach(ing => add(ing, r.name));
+    r.ingredients.forEach(ing => add(ing, {
+      label: `${DAY_LABELS[i]} · ${r.name}`,
+      day: DAY_LABELS[i],
+      recipeName: r.name,
+      type: "recipe",
+      recipeId: r.id,
+      ingId: ing.id
+    }));
   });
-  db.staples.filter(s => s.on).forEach(s => add(s, "Staple"));
-  db.week.extras.forEach(e => add(e, "One-liner"));
-  return [...map.values()];
+  db.staples.filter(s => s.on).forEach(s => add(s, { label: "Staple", type: "staple", id: s.id }));
+  db.week.extras.forEach(e => add(e, { label: "One-liner", type: "extra", id: e.id }));
+  return [...map.values()].map(entry => {
+    const override = db.week.edits[entry.key];
+    const locked = !!(override && String(override.qty ?? "").trim() !== "");
+    const view = qtyPresentation(locked ? [override.qty] : entry.qtys);
+    entry.qtyLabel = view.label;
+    entry.qtyEdit = locked ? String(override.qty) : view.edit;
+    entry.qtyLocked = locked;
+    if (override && override.item) entry.displayItem = override.item;
+    return entry;
+  });
 }
 function visibleItems() { return generated().filter(it => !db.week.checks[it.key]); }
+function couponOn(entry) {
+  const flag = db.week.coupons[entry.key];
+  if (flag === true || flag === false) return flag;
+  return !!entry.coupon;
+}
+function displayLine(it) {
+  const name = it.displayItem || it.item;
+  return it.qtyLabel ? `${name} ${it.qtyLabel}` : name;
+}
+function sourceLine(entry) {
+  const byRecipe = new Map();
+  const other = [];
+  (entry.origins || []).forEach(origin => {
+    if (origin.type === "recipe") {
+      const days = byRecipe.get(origin.recipeName) || [];
+      if (origin.day && !days.includes(origin.day)) days.push(origin.day);
+      byRecipe.set(origin.recipeName, days);
+    } else if (origin.label && !other.includes(origin.label)) other.push(origin.label);
+  });
+  const parts = [...byRecipe.entries()].map(([name, days]) => days.length ? `${days.join(", ")} · ${name}` : name);
+  return [...parts, ...other].join(" · ");
+}
+function renameKey(oldKey, newName) {
+  const newKey = norm(newName);
+  if (!newKey || newKey === oldKey) return;
+  ["checks", "coupons", "edits"].forEach(bucket => {
+    if (Object.prototype.hasOwnProperty.call(db.week[bucket], oldKey)) {
+      if (!Object.prototype.hasOwnProperty.call(db.week[bucket], newKey)) db.week[bucket][newKey] = db.week[bucket][oldKey];
+      delete db.week[bucket][oldKey];
+    }
+  });
+  db.week.removed = db.week.removed.map(k => k === oldKey ? newKey : k);
+}
+function clearQtyEdit(key) {
+  const edit = db.week.edits[key];
+  if (!edit) return;
+  delete edit.qty;
+  if (!Object.keys(edit).length) delete db.week.edits[key];
+}
 
 function renderReview() {
   const items = generated();
   const el = document.getElementById("reviewList");
   if (!items.length) {
-    el.innerHTML = `<div class="empty">Nothing on the list. Pick recipes or add a one-liner, then come back here.</div>`;
+    el.innerHTML = `<div class="empty">Nothing on the list yet. Plan a recipe that has items, or add a one-liner.</div>`;
     paintPrint([]);
     return;
   }
   const groups = AISLES.map(a => ({ aisle: a, items: items.filter(i => (i.aisle || "Other") === a) })).filter(g => g.items.length);
   el.innerHTML = groups.map(g => `<div class="list-section"><div class="aisle">${g.aisle}</div>` + g.items.map(it => {
     const checked = !!db.week.checks[it.key];
-    return `<div class="item ${checked ? "checked" : ""}">
-      <input type="checkbox" data-check="${it.key}" ${checked ? "checked" : ""} />
+    const coupon = couponOn(it);
+    const editing = lineEditKey === it.key;
+    const one = it.origins.length === 1;
+    const editor = editing ? `<div class="edit-pop">
+      ${one ? `<input data-line-name type="text" value="${escapeAttr(it.displayItem || it.item)}" aria-label="Item" />` : ""}
+      <input data-line-qty type="text" value="${escapeAttr(it.qtyEdit)}" placeholder="Qty" aria-label="Quantity" />
+      <button class="btn small" type="button" data-save-line="${escapeAttr(it.key)}">Save</button>
+      <button class="btn ghost small" type="button" data-cancel-line>Cancel</button>
+      ${it.qtyLocked ? `<button class="btn ghost small" type="button" data-reset-line="${escapeAttr(it.key)}">Use saved amounts</button>` : ""}
+      <p class="hint muted">${one ? "Saves on the item you added." : "Sets this week’s total. Leave the quantity blank to add up the saved amounts."}</p>
+    </div>` : "";
+    return `<div class="item ${checked ? "checked" : ""} ${coupon ? "has-coupon" : ""}">
+      <input type="checkbox" data-check="${escapeAttr(it.key)}" ${checked ? "checked" : ""} aria-label="Already have ${escapeAttr(it.item)}" />
       <div>
-        <div class="item-text">${escapeHtml([it.qty, it.item].filter(Boolean).join(" "))}</div>
-        <span class="src">${escapeHtml([...new Set(it.sources)].join(" · "))}</span>
+        <div class="item-text">${escapeHtml(displayLine(it))}${couponButton(coupon, "data-coupon", it.key)}</div>
+        <span class="src">${escapeHtml(sourceLine(it))}</span>
+        ${editor}
       </div>
-      <button class="btn ghost small" data-drop="${it.key}" type="button">Remove</button>
+      <div class="item-actions">
+        ${editing ? "" : `<button class="btn ghost small" data-edit-line="${escapeAttr(it.key)}" type="button">Edit</button>`}
+        <button class="btn ghost small" data-drop="${escapeAttr(it.key)}" type="button">Remove</button>
+      </div>
     </div>`;
   }).join("") + `</div>`).join("");
   el.querySelectorAll("[data-check]").forEach(box => box.onchange = () => {
     db.week.checks[box.dataset.check] = box.checked; save(); render();
   });
   el.querySelectorAll("[data-drop]").forEach(btn => btn.onclick = () => {
-    db.week.removed.push(btn.dataset.drop); save(); render();
+    const key = btn.dataset.drop;
+    if (!db.week.removed.includes(key)) db.week.removed.push(key);
+    if (lineEditKey === key) lineEditKey = null;
+    save(); render();
   });
+  el.querySelectorAll("[data-coupon]").forEach(btn => btn.onclick = () => {
+    const key = btn.dataset.coupon;
+    const entry = generated().find(it => it.key === key);
+    const next = !couponOn(entry || { key, coupon: false });
+    db.week.coupons[key] = next;
+    if (entry && entry.origins.length === 1) {
+      const origin = entry.origins[0];
+      if (origin.type === "extra") {
+        const extra = db.week.extras.find(x => x.id === origin.id);
+        if (extra) extra.coupon = next;
+      }
+      if (origin.type === "staple") {
+        const staple = db.staples.find(x => x.id === origin.id);
+        if (staple) staple.coupon = next;
+      }
+    }
+    save(); render();
+  });
+  el.querySelectorAll("[data-edit-line]").forEach(btn => btn.onclick = () => { lineEditKey = btn.dataset.editLine; render(); });
+  el.querySelectorAll("[data-cancel-line]").forEach(btn => btn.onclick = () => { lineEditKey = null; render(); });
+  el.querySelectorAll("[data-reset-line]").forEach(btn => btn.onclick = () => {
+    clearQtyEdit(btn.dataset.resetLine);
+    lineEditKey = null;
+    save(); render();
+  });
+  el.querySelectorAll("[data-save-line]").forEach(btn => btn.onclick = () => saveLineEdit(btn));
   paintPrint(items.filter(it => !db.week.checks[it.key]));
+}
+function saveLineEdit(btn) {
+  const key = btn.dataset.saveLine;
+  const entry = generated().find(it => it.key === key);
+  const wrap = btn.parentElement;
+  if (!entry) return;
+  const qtyInput = wrap.querySelector("[data-line-qty]");
+  const nameInput = wrap.querySelector("[data-line-name]");
+  const qty = qtyInput ? qtyInput.value.trim() : "";
+  const name = nameInput ? nameInput.value.trim() : "";
+  const one = entry.origins.length === 1 ? entry.origins[0] : null;
+  if (one && one.type === "extra") {
+    const extra = db.week.extras.find(x => x.id === one.id);
+    if (extra && (name || extra.item)) {
+      const oldKey = norm(extra.item);
+      extra.qty = qty;
+      if (name) extra.item = name;
+      extra.aisle = guessAisle(extra.item);
+      renameKey(oldKey, extra.item);
+      clearQtyEdit(norm(extra.item));
+    }
+  } else if (one && one.type === "staple") {
+    const staple = db.staples.find(x => x.id === one.id);
+    if (staple && (name || staple.item)) {
+      const oldKey = norm(staple.item);
+      staple.qty = qty;
+      if (name) staple.item = name;
+      staple.aisle = guessAisle(staple.item);
+      renameKey(oldKey, staple.item);
+      clearQtyEdit(norm(staple.item));
+    }
+  } else if (one && one.type === "recipe") {
+    const recipe = recipeById(one.recipeId);
+    const ing = recipe && recipe.ingredients.find(i => i.id === one.ingId);
+    if (ing && (name || ing.item)) {
+      const oldKey = norm(ing.item);
+      ing.qty = qty;
+      if (name) ing.item = name;
+      ing.aisle = guessAisle(ing.item);
+      renameKey(oldKey, ing.item);
+      clearQtyEdit(norm(ing.item));
+    }
+  } else if (!qty) {
+    clearQtyEdit(key);
+  } else {
+    db.week.edits[key] = { ...(db.week.edits[key] || {}), qty };
+  }
+  lineEditKey = null;
+  save(); render();
 }
 function paintPrint(items) {
   const groups = AISLES.map(a => ({ aisle: a, items: items.filter(i => (i.aisle || "Other") === a) })).filter(g => g.items.length);
-  const recipes = db.recipes.filter(r => db.week.recipeIds.includes(r.id)).map(r => r.name);
+  const meals = mealSummary();
   document.getElementById("print-sheet").innerHTML = `
     <div class="print-head">
       <h1>${escapeHtml(db.week.name || "Grocery list")}</h1>
       <div>${new Date().toLocaleDateString()}</div>
     </div>
-    <p class="print-cook">${recipes.length ? "Cooking: " + escapeHtml(recipes.join(", ")) : ""}</p>
+    <p class="print-cook">${meals ? escapeHtml(meals) : ""}</p>
     <div class="print-cols">
     ${groups.map(g => `<div class="print-group"><div class="print-aisle">${g.aisle}</div>` + g.items.map(it =>
-      `<div class="print-item"><span class="print-box"></span><span>${escapeHtml([it.qty, it.item].filter(Boolean).join(" "))}</span></div>`
+      `<div class="print-item"><span class="print-box"></span><span>${couponOn(it) ? `<span class="print-coupon">Coupon</span>` : ""}${escapeHtml(displayLine(it))}</span></div>`
     ).join("") + `</div>`).join("")}
     </div>
   `;
@@ -489,14 +959,14 @@ function paintPrint(items) {
 function renderRecipeCards() {
   const el = document.getElementById("recipeCards");
   if (!db.recipes.length) {
-    el.innerHTML = `<div class="empty">The recipe box is empty. A recipe is just a name and a pile of ingredient lines.</div>`;
+    el.innerHTML = `<div class="empty">The recipe box is empty. A recipe is a name, plus items when you have them.</div>`;
     return;
   }
   el.innerHTML = db.recipes.map(r => `<article class="card recipe-card">
     <h3>${escapeHtml(r.name)}</h3>
-    <div class="muted">${r.servings ? escapeHtml(r.servings) + " · " : ""}${r.ingredients.length} ingredients</div>
+    <div class="muted">${r.servings ? escapeHtml(r.servings) + " · " : ""}${r.ingredients.length ? r.ingredients.length + " ingredients" : "No items yet"}</div>
     ${r.notes ? `<p>${escapeHtml(r.notes)}</p>` : ""}
-    <ul>${r.ingredients.slice(0, 6).map(i => `<li>${escapeHtml([i.qty, i.item].filter(Boolean).join(" "))}</li>`).join("")}${r.ingredients.length > 6 ? "<li>…</li>" : ""}</ul>
+    <ul>${r.ingredients.slice(0, 6).map(i => `<li>${escapeHtml(formatItem(i.item, i.qty))}</li>`).join("")}${r.ingredients.length > 6 ? "<li>…</li>" : ""}</ul>
     <button class="btn ghost small" data-edit="${r.id}" type="button">Edit</button>
   </article>`).join("");
   el.querySelectorAll("[data-edit]").forEach(b => b.onclick = () => openRecipe(b.dataset.edit));
@@ -515,14 +985,14 @@ function openRecipe(id) {
 }
 function paintIngs(ings) {
   const el = document.getElementById("ingEditor");
-  el.innerHTML = ings.map((ing, idx) => `<div class="ing-row">
+  el.innerHTML = ings.map((ing, idx) => `<div class="ing-row" data-ing-id="${escapeAttr(ing.id || "")}">
     <input data-q="${idx}" type="text" placeholder="Qty" value="${escapeAttr(ing.qty)}" />
     <input data-i="${idx}" type="text" placeholder="Ingredient" value="${escapeAttr(ing.item)}" />
     <select data-a="${idx}">${AISLES.map(a => `<option ${a === (ing.aisle || guessAisle(ing.item)) ? "selected" : ""}>${a}</option>`).join("")}</select>
-    <button class="icon-btn" data-x="${idx}" type="button">×</button>
+    <button class="icon-btn" data-x="${idx}" type="button" aria-label="Remove ingredient">×</button>
   </div>`).join("");
   el.querySelectorAll("[data-x]").forEach(b => b.onclick = () => {
-    const next = readIngs().filter((_, i) => i !== Number(b.dataset.x));
+    const next = readIngs(true).filter((_, i) => i !== Number(b.dataset.x));
     paintIngs(next.length ? next : [item("", "", "Other")]);
   });
   el.querySelectorAll("[data-i]").forEach(inp => inp.onchange = () => {
@@ -530,13 +1000,13 @@ function paintIngs(ings) {
     if (sel && sel.value === "Other") sel.value = guessAisle(inp.value);
   });
 }
-function readIngs() {
+function readIngs(keepEmpty) {
   return [...document.querySelectorAll("#ingEditor .ing-row")].map(row => ({
-    id: uid(),
+    id: row.dataset.ingId || uid(),
     qty: row.querySelector("[data-q]").value.trim(),
     item: row.querySelector("[data-i]").value.trim(),
     aisle: row.querySelector("[data-a]").value
-  })).filter(i => i.item);
+  })).filter(i => keepEmpty || i.item);
 }
 
 function escapeHtml(s) {
@@ -558,12 +1028,18 @@ document.querySelectorAll(".tabs button").forEach(btn => btn.onclick = () => {
   if (btn.dataset.tab === "list") renderReview();
 });
 document.getElementById("weekName").onchange = e => { db.week.name = e.target.value; save(); };
-document.getElementById("clearPicks").onclick = () => { db.week.recipeIds = []; save(); render(); };
+document.getElementById("clearPicks").onclick = () => { db.week.days = blankDays(); save(); render(); };
 document.getElementById("saveTemplate").onclick = () => {
   const name = document.getElementById("templateName").value.trim();
   if (!name) return alert("Name the template first.");
   db.templates = db.templates.filter(t => t.name !== name);
-  db.templates.push({ id: uid(), name, recipeIds: [...db.week.recipeIds], extras: db.week.extras.map(({qty, item, aisle}) => ({qty, item, aisle})) });
+  db.templates.push({
+    id: uid(),
+    name,
+    days: { ...db.week.days },
+    recipeIds: plannedIds(),
+    extras: db.week.extras.map(({qty, item: itemName, aisle, coupon}) => ({qty, item: itemName, aisle, coupon: !!coupon}))
+  });
   document.getElementById("templateName").value = "";
   save(); render();
 };
@@ -577,41 +1053,52 @@ document.getElementById("extraItem").addEventListener("keydown", e => {
   document.getElementById("extraQty").value = "";
   save(); render();
 });
-document.getElementById("addStaple").onclick = () => {
-  const name = prompt("Staple item");
+function commitStaple() {
+  const name = document.getElementById("stapleItem").value.trim();
   if (!name) return;
-  db.staples.push({ ...item(name, ""), on: true });
+  db.staples.push({ ...item(name, document.getElementById("stapleQty").value.trim()), on: true });
+  document.getElementById("stapleItem").value = "";
+  document.getElementById("stapleQty").value = "";
   save(); render();
-};
+}
+document.getElementById("addStaple").onclick = commitStaple;
+document.getElementById("stapleItem").addEventListener("keydown", e => {
+  if (e.key !== "Enter") return;
+  e.preventDefault();
+  commitStaple();
+});
 document.getElementById("goList").onclick = () => document.querySelector('[data-tab="list"]').click();
 document.getElementById("printBtn").onclick = () => window.print();
 document.getElementById("copyList").onclick = async () => {
-  const lines = visibleItems().map(it => `☐ ${[it.qty, it.item].filter(Boolean).join(" ")}`);
-  const text = `${db.week.name}\n\n${lines.join("\n")}`;
+  const lines = visibleItems().map(it => `☐ ${displayLine(it)}${couponOn(it) ? "  COUPON" : ""}`);
+  const meals = mealSummary();
+  const text = `${db.week.name}${meals ? "\n" + meals : ""}\n\n${lines.join("\n")}`;
   try { await navigator.clipboard.writeText(text); alert("Copied."); }
   catch { prompt("Copy this list:", text); }
 };
 document.getElementById("newRecipe").onclick = () => openRecipe(null);
 document.getElementById("closeDialog").onclick = () => document.getElementById("recipeDialog").close();
-document.getElementById("addIng").onclick = () => paintIngs([...readIngs(), item("", "", "Other")]);
+document.getElementById("addIng").onclick = () => paintIngs([...readIngs(true), item("", "", "Other")]);
 document.getElementById("deleteRecipe").onclick = () => {
   if (!editingId) return;
   if (!confirm("Delete this recipe?")) return;
   db.recipes = db.recipes.filter(r => r.id !== editingId);
-  db.week.recipeIds = db.week.recipeIds.filter(id => id !== editingId);
+  DAY_KEYS.forEach(k => { if (db.week.days[k] === editingId) db.week.days[k] = null; });
   document.getElementById("recipeDialog").close();
   save(); render();
 };
 document.getElementById("recipeForm").onsubmit = e => {
   e.preventDefault();
+  const rows = readIngs(true);
+  if (rows.some(row => row.qty && !row.item)) return alert("An ingredient is missing its name.");
   const recipe = {
     id: editingId || uid(),
     name: document.getElementById("rName").value.trim(),
     servings: document.getElementById("rServings").value.trim(),
     notes: document.getElementById("rNotes").value.trim(),
-    ingredients: readIngs()
+    ingredients: rows.filter(row => row.item)
   };
-  if (!recipe.name || !recipe.ingredients.length) return alert("Need a name and at least one ingredient.");
+  if (!recipe.name) return alert("Need a name.");
   if (editingId) db.recipes = db.recipes.map(r => r.id === editingId ? recipe : r);
   else db.recipes.push(recipe);
   document.getElementById("recipeDialog").close();
@@ -649,7 +1136,7 @@ document.getElementById("importFile").onchange = async e => {
   if (!file) return;
   const next = JSON.parse(await file.text());
   if (!next.recipes || !next.week) return alert("That file doesn’t look like a Weeklist backup.");
-  db = next; save(); render();
+  db = normalize(next); save(); render();
 };
 
 render();
